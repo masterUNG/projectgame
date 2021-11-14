@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                                       formKey.currentState!.reset();
                                       Navigator.pushReplacement(context,
                                           MaterialPageRoute(builder: (context) {
-                                        return pageMenu();
+                                        return PageMenu();
                                       }));
                                     });
                                   } on FirebaseAuthException catch (e) {
