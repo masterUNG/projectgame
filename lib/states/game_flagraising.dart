@@ -8,24 +8,33 @@ import 'package:project_game/model/show_title.dart';
 import 'package:project_game/utility/my_constant.dart';
 import 'package:project_game/widgets/show_image.dart';
 import 'package:project_game/widgets/show_progress.dart';
+import 'package:sensors/sensors.dart';
 
-class GameBird extends StatefulWidget {
-  const GameBird({Key? key}) : super(key: key);
+class GameFlagraising extends StatefulWidget {
+  const GameFlagraising({Key? key}) : super(key: key);
 
   @override
-  _GameBirdState createState() => _GameBirdState();
+  _GameFlagraisingState createState() => _GameFlagraisingState();
 }
 
-class _GameBirdState extends State<GameBird> {
-  int timebird = 0, myAnswer = 0, score = 0, playTime = 0, timeStop = 0;
+class _GameFlagraisingState extends State<GameFlagraising> {
+  int timeflag = 0, myAnswer = 0, score = 0, playTime = 0, timeStop = 0;
+  double x = 0, y = 0, z = 0;
   List<int> idQuestions = [];
-  List<BirdModel> birdModels = [];
+  List<BirdModel> flagModels = [];
 
   @override
   void initState() {
     super.initState();
     randomQuestion();
     autoPlayTime();
+    accelerometerEvents.listen((AccelerometerEvent event) {
+      setState(() {
+        x = event.x;
+        y = event.y;
+        z = event.z;
+      });
+    });
   }
 
   Future<void> autoPlayTime() async {
@@ -40,12 +49,12 @@ class _GameBirdState extends State<GameBird> {
   }
 
   Future<void> randomQuestion() async {
-    for (var i = 0; i < 10; i++) {
-      int i = Random().nextInt(14);
+    for (var i = 0; i < 5; i++) {
+      int i = Random().nextInt(4);
       idQuestions.add(i);
 
       await FirebaseFirestore.instance
-          .collection('bird')
+          .collection('flag')
           .doc('doc$i')
           .get()
           .then((value) {
@@ -53,7 +62,7 @@ class _GameBirdState extends State<GameBird> {
           value.data()!,
         );
         setState(() {
-          birdModels.add(model);
+          flagModels.add(model);
         });
       });
     }
@@ -62,9 +71,27 @@ class _GameBirdState extends State<GameBird> {
 
   @override
   Widget build(BuildContext context) {
+    if (x >= -2 && x <= 2 && y >= 8 && y <= 10 && z >= -2 && z <= 2) {
+      setState(() {
+        myAnswer = 1;
+      });
+    } else if (x >= 8 && x <= 10 && y >= -2 && y <= 2 && z >= -2 && z <= 2) {
+      setState(() {
+        myAnswer = 2;
+      });
+    } else if (x <= -8 && x >= -10 && y >= -2 && y <= 2 && z >= -2 && z <= 2) {
+      setState(() {
+        myAnswer = 3;
+      });
+    } else {
+      setState(() {
+        myAnswer = 0;
+      });
+    }
+    processCalculate();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bird Counting Game'),
+        title: Text('Flagraising Counting Game'),
         actions: [
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -77,36 +104,16 @@ class _GameBirdState extends State<GameBird> {
           )
         ],
       ),
-      floatingActionButton: buildFloating(),
-      body: birdModels.isEmpty
+      body: flagModels.isEmpty
           ? ShowProgress()
           : Center(
               child: Column(
                 children: [
                   buildImage(),
                   buildMyAnswer(),
-                  Spacer(),
-                  buttonAnswer(),
                 ],
               ),
             ),
-    );
-  }
-
-  Padding buttonAnswer() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 36),
-      child: IconButton(
-        onPressed: () {
-          setState(() {
-            myAnswer++;
-          });
-        },
-        icon: Icon(
-          Icons.add_circle,
-          size: 60,
-        ),
-      ),
     );
   }
 
@@ -117,42 +124,29 @@ class _GameBirdState extends State<GameBird> {
     return Container(
       width: 350,
       height: 350,
-      child: ShowImage(partUrl: birdModels[timebird].path),
+      child: ShowImage(partUrl: flagModels[timeflag].path),
     );
   }
 
   void processCalculate() {
-    if (timebird == 9) {
-      if (myAnswer == birdModels[timebird].answer) {
+    if (timeflag == 5) {
+      if (myAnswer == flagModels[timeflag].answer) {
         score++;
       }
       print('## $score');
-      timeStop = playTime ;
+      timeStop = playTime;
       print('## $timeStop');
       Navigator.pushNamedAndRemoveUntil(
-          context, MyConstant.routeResultBird, (route) => false);
+          context, MyConstant.routeResultBox, (route) => false);
     } else {
-      if (myAnswer == birdModels[timebird].answer) {
+      if (myAnswer == flagModels[timeflag].answer) {
         score++;
+        setState(() {
+        myAnswer = 0;
+        timeflag++;
+      });
       }
       print('## $score');
-      setState(() {
-        myAnswer = 0;
-        timebird++;
-      });
     }
-  }
-
-  FloatingActionButton buildFloating() {
-    return FloatingActionButton(
-      onPressed: () => processCalculate(),
-      child: Text(
-        (timebird + 1).toString(),
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
   }
 }

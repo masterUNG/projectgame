@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+// ignore: unused_import
 import 'package:firebase_core/firebase_core.dart';
+// ignore: unused_import
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:project_game/model/profile.dart';
@@ -22,12 +24,14 @@ class _PageMenuState extends State<PageMenu> {
 
   @override
   void initState() {
+    // ignore: todo
     // TODO: implement initState
     super.initState();
     findProfile();
   }
 
   Future<void> findProfile() async {
+    // ignore: await_only_futures
     await FirebaseAuth.instance.authStateChanges().listen((event) async {
       String uid = event!.uid;
       print('## uid = $uid');
@@ -51,7 +55,7 @@ class _PageMenuState extends State<PageMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("ข้อมูลส่วนตัว"),
+        title: Text("หน้าหลัก"),
         actions: [
           IconButton(
               onPressed: () {
@@ -80,6 +84,14 @@ class _PageMenuState extends State<PageMenu> {
                       iconData: Icons.filter_1,
                       label: 'bird counting',
                       routeState: MyConstant.routeIntroBird),
+                  ShowNavigator(
+                      iconData: Icons.filter_2,
+                      label: 'box counting',
+                      routeState: MyConstant.routeIntroBox),
+                      ShowNavigator(
+                      iconData: Icons.filter_3,
+                      label: 'flag Raising',
+                      routeState: MyConstant.routeIntroBox),
                 ],
               ),
             ),

@@ -28,6 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
   File? myFile;
 
   @override
+  // ignore: override_on_non_overriding_member
   Widget showImage() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

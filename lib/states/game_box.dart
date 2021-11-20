@@ -9,17 +9,17 @@ import 'package:project_game/utility/my_constant.dart';
 import 'package:project_game/widgets/show_image.dart';
 import 'package:project_game/widgets/show_progress.dart';
 
-class GameBird extends StatefulWidget {
-  const GameBird({Key? key}) : super(key: key);
+class GameBox extends StatefulWidget {
+  const GameBox({Key? key}) : super(key: key);
 
   @override
-  _GameBirdState createState() => _GameBirdState();
+  _GameBoxState createState() => _GameBoxState();
 }
 
-class _GameBirdState extends State<GameBird> {
-  int timebird = 0, myAnswer = 0, score = 0, playTime = 0, timeStop = 0;
+class _GameBoxState extends State<GameBox> {
+  int timebox = 0, myAnswer = 0, score = 0, playTime = 0, timeStop = 0;
   List<int> idQuestions = [];
-  List<BirdModel> birdModels = [];
+  List<BirdModel> boxModels = [];
 
   @override
   void initState() {
@@ -41,11 +41,11 @@ class _GameBirdState extends State<GameBird> {
 
   Future<void> randomQuestion() async {
     for (var i = 0; i < 10; i++) {
-      int i = Random().nextInt(14);
+      int i = Random().nextInt(1);
       idQuestions.add(i);
 
       await FirebaseFirestore.instance
-          .collection('bird')
+          .collection('box')
           .doc('doc$i')
           .get()
           .then((value) {
@@ -53,7 +53,7 @@ class _GameBirdState extends State<GameBird> {
           value.data()!,
         );
         setState(() {
-          birdModels.add(model);
+          boxModels.add(model);
         });
       });
     }
@@ -64,7 +64,7 @@ class _GameBirdState extends State<GameBird> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bird Counting Game'),
+        title: Text('Box Counting Game'),
         actions: [
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -78,7 +78,7 @@ class _GameBirdState extends State<GameBird> {
         ],
       ),
       floatingActionButton: buildFloating(),
-      body: birdModels.isEmpty
+      body: boxModels.isEmpty
           ? ShowProgress()
           : Center(
               child: Column(
@@ -117,28 +117,28 @@ class _GameBirdState extends State<GameBird> {
     return Container(
       width: 350,
       height: 350,
-      child: ShowImage(partUrl: birdModels[timebird].path),
+      child: ShowImage(partUrl: boxModels[timebox].path),
     );
   }
 
   void processCalculate() {
-    if (timebird == 9) {
-      if (myAnswer == birdModels[timebird].answer) {
+    if (timebox == 9) {
+      if (myAnswer == boxModels[timebox].answer) {
         score++;
       }
       print('## $score');
       timeStop = playTime ;
       print('## $timeStop');
       Navigator.pushNamedAndRemoveUntil(
-          context, MyConstant.routeResultBird, (route) => false);
+          context, MyConstant.routeResultBox, (route) => false);
     } else {
-      if (myAnswer == birdModels[timebird].answer) {
+      if (myAnswer == boxModels[timebox].answer) {
         score++;
       }
       print('## $score');
       setState(() {
         myAnswer = 0;
-        timebird++;
+        timebox++;
       });
     }
   }
@@ -147,7 +147,7 @@ class _GameBirdState extends State<GameBird> {
     return FloatingActionButton(
       onPressed: () => processCalculate(),
       child: Text(
-        (timebird + 1).toString(),
+        (timebox + 1).toString(),
         style: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,

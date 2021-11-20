@@ -4,14 +4,14 @@ import 'package:project_game/model/show_title.dart';
 import 'package:project_game/utility/my_constant.dart';
 import 'package:project_game/widgets/show_progress.dart';
 
-class IntroBird extends StatefulWidget {
-  const IntroBird({Key? key}) : super(key: key);
+class IntroBox extends StatefulWidget {
+  const IntroBox({Key? key}) : super(key: key);
 
   @override
-  _IntroBirdState createState() => _IntroBirdState();
+  _IntroBoxState createState() => _IntroBoxState();
 }
 
-class _IntroBirdState extends State<IntroBird> {
+class _IntroBoxState extends State<IntroBox> {
   List<String> images = [
     'asset/images/image1.png',
     'asset/images/image2.png',
@@ -23,9 +23,9 @@ class _IntroBirdState extends State<IntroBird> {
     'title3',
   ];
   List<String> bodys = [
-    'body1',
-    'body2',
-    'body3',
+    'bodyBox1',
+    'bodyBox2',
+    'bodyBox3',
   ];
   List<PageViewModel> pageViewModels = [];
 
@@ -74,7 +74,7 @@ class _IntroBirdState extends State<IntroBird> {
           ? ShowProgress()
           : IntroductionScreen(
               pages: pageViewModels,
-              onDone: () => Navigator.pushNamedAndRemoveUntil(context, MyConstant.routeCountTimeBird, (route) => false),
+              onDone: () => Navigator.pushNamedAndRemoveUntil(context, MyConstant.routeCountTimeBox, (route) => false),
               done: Icon(Icons.forward),
               skip: ShowTitle(
                 title: 'Skip',

@@ -4,9 +4,17 @@ class MyConstant {
   static String routeHome = '/home';
   static String routePagemenu = '/pagemenu';
   static String routeIntroBird = '/introbird';
-  static String routeCountTime = '/counttime';
+  static String routeCountTimeBird = '/counttimebird';
   static String routeGameBird = '/gamebird';
   static String routeResultBird = '/resultbird';
+  static String routeIntroBox = '/introbox';
+  static String routeCountTimeBox = '/counttimebox';
+  static String routeGameBox = '/gamebox';
+  static String routeResultBox = '/resultbox';
+  static String routeIntroFlagraising = '/introflagraising';
+  static String routeCountTimeFlagraising = '/counttimeflagraising';
+  static String routeGameFlagraising = '/gameflagraising';
+  static String routeResultFlagraising = '/resultflagraising';
 
   static Color primary = Colors.green;
   static Color dart = Colors.indigo;
