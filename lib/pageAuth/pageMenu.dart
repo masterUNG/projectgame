@@ -54,25 +54,7 @@ class _PageMenuState extends State<PageMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("หน้าหลัก"),
-        actions: [
-          IconButton(
-              onPressed: () {
-                auth.signOut().then((value) {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) {
-                    return HomeScreen();
-                  }));
-                });
-              },
-              icon: Icon(
-                Icons.logout,
-                size: 40,
-                color: Colors.white,
-              ))
-        ],
-      ),
+      appBar: buildAppBar(context),
       body: userModel == null
           ? ShowProgress()
           : Center(
@@ -95,6 +77,28 @@ class _PageMenuState extends State<PageMenu> {
                 ],
               ),
             ),
+    );
+  }
+
+  AppBar buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text("หน้าหลัก"),
+      actions: [
+        IconButton(
+            onPressed: () {
+              auth.signOut().then((value) {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) {
+                  return HomeScreen();
+                }));
+              });
+            },
+            icon: Icon(
+              Icons.logout,
+              size: 40,
+              color: Colors.white,
+            ))
+      ],
     );
   }
 

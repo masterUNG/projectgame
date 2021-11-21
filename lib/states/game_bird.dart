@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project_game/model/bird_model.dart';
+import 'package:project_game/model/score_model.dart';
 import 'package:project_game/model/show_title.dart';
 import 'package:project_game/utility/my_constant.dart';
 import 'package:project_game/widgets/show_image.dart';
@@ -20,12 +22,20 @@ class _GameBirdState extends State<GameBird> {
   int timebird = 0, myAnswer = 0, score = 0, playTime = 0, timeStop = 0;
   List<int> idQuestions = [];
   List<BirdModel> birdModels = [];
+  late String userUid;
 
   @override
   void initState() {
     super.initState();
     randomQuestion();
     autoPlayTime();
+    findUser();
+  }
+
+  Future<void> findUser() async {
+    await FirebaseAuth.instance.authStateChanges().listen((event) {
+      userUid = event!.uid;
+    });
   }
 
   Future<void> autoPlayTime() async {
@@ -121,16 +131,28 @@ class _GameBirdState extends State<GameBird> {
     );
   }
 
-  void processCalculate() {
+  Future<void> processCalculate() async {
     if (timebird == 9) {
       if (myAnswer == birdModels[timebird].answer) {
         score++;
       }
-      print('## $score');
-      timeStop = playTime ;
-      print('## $timeStop');
-      Navigator.pushNamedAndRemoveUntil(
-          context, MyConstant.routeResultBird, (route) => false);
+      print('## score ==> $score');
+      timeStop = playTime;
+      print('## timesStop => $timeStop');
+
+      DateTime dateTime = DateTime.now();
+      Timestamp playDate = Timestamp.fromDate(dateTime);
+
+      ScoreModel model = ScoreModel(score, playTime, playDate);
+
+      await FirebaseFirestore.instance
+          .collection('user')
+          .doc(userUid)
+          .collection('scorebird')
+          .doc()
+          .set(model.toMap())
+          .then((value) => Navigator.pushNamedAndRemoveUntil(
+              context, MyConstant.routeResultBird, (route) => false));
     } else {
       if (myAnswer == birdModels[timebird].answer) {
         score++;
